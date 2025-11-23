@@ -4,161 +4,159 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Ajinkya Bhosale — Cybersecurity Portfolio</title>
-    <meta name="description"
-        content="Ajinkya Bhosale — B.E. (CSE) | Cybersecurity learner. Projects: HIDS, honeypot, defensive input-capture research. TryHackMe / HTB / CTF." />
-    <link rel="stylesheet" href="styles.css" />
+    <title>TLS Handshake — Tech Blog</title>
+    <meta name="description" content="Explainer and code examples for the SSL/TLS handshake" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container header-inner">
-            <div class="brand">
-                <div class="avatar">AJ</div>
-                <div>
-                    <h1>Ajinkya Bhosale</h1>
-                    <p class="muted">Cybersecurity learner — B.E. Computer Science, 4th year</p>
+    <div class="container">
+        <header>
+            <div>
+                <h1>TLS Handshake Explained — Tech Blog</h1>
+                <div class="meta">By <strong>hackeraju</strong> • <span id="date"></span></div>
+            </div>
+            <div>
+                <button class="btn" onclick="window.scrollTo(0,document.body.scrollHeight)">Read Code Examples
+                    ↓</button>
+            </div>
+        </header>
+
+        <article class="card">
+            <p class="lead">A concise, copy-paste-ready blog page that explains the TLS handshake and embeds runnable
+                code examples (for demonstration). Includes a small visual diagram and copy buttons for each snippet so
+                your readers can try examples quickly.</p>
+
+            <section>
+                <h2>What is TLS (short)</h2>
+                <p>TLS (Transport Layer Security) is the modern protocol that secures HTTP connections (you know it as
+                    HTTPS). The handshake is the initial exchange where client and server agree on versions, cipher
+                    suites, and derive shared secrets for encryption.</p>
+            </section>
+
+            <section class="row">
+                <div class="col-2 card">
+                    <h3>Handshake diagram</h3>
+                    <div class="diagram">
+                        <!-- Simple SVG sequence diagram -->
+                        <svg width="100%" height="160" viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true">
+                            <style>
+                                text {
+                                    fill: #cfe9ff;
+                                    font-family: Inter, system-ui, Arial;
+                                    font-size: 12px
+                                }
+
+                                .lane {
+                                    fill: none;
+                                    stroke: #1f3b52;
+                                    stroke-width: 1
+                                }
+
+                                .arrow {
+                                    stroke: #6ee7b7;
+                                    stroke-width: 2;
+                                    marker-end: url(#a)
+                                }
+                            </style>
+                            <defs>
+                                <marker id="a" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <path d="M0,0 L6,3 L0,6 z" fill="#6ee7b7" />
+                                </marker>
+                            </defs>
+                            <text x="80" y="18">Client (Browser)</text>
+                            <text x="420" y="18">Server</text>
+                            <line x1="120" y1="30" x2="120" y2="140" class="lane" />
+                            <line x1="480" y1="30" x2="480" y2="140" class="lane" />
+                            <path d="M120 46 L480 46" class="arrow" />
+                            <text x="260" y="40">Client Hello</text>
+                            <path d="M480 72 L120 72" class="arrow" />
+                            <text x="260" y="68">Server Hello + Certificate</text>
+                            <path d="M120 98 L480 98" class="arrow" />
+                            <text x="260" y="94">Client Key Exchange</text>
+                            <path d="M480 124 L120 124" class="arrow" />
+                            <text x="260" y="120">Finished (encrypted)</text>
+                        </svg>
+                    </div>
                 </div>
-            </div>
 
-            <nav class="nav">
-                <a href="#projects">Projects</a>
-                <a href="#skills">Skills</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
-                <button id="themeToggle" aria-label="Toggle theme">🌙</button>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <section id="hero" class="hero container">
-            <div class="hero-left">
-                <h2>Hi — I'm Ajinkya</h2>
-                <p class="lead">
-                    4th-year B.E. (Computer Science) student passionate about networking, pentesting, and security
-                    analysis.
-                    I build defensive and research-focused projects like Host-based Intrusion Detection Systems (HIDS),
-                    honeypots,
-                    and defensive input-capture research. Active on TryHackMe &amp; HackTheBox; CTF participant.
-                </p>
-
-                <div class="cta">
-                    <a class="btn" href="#projects">View projects</a>
-                    <a class="btn ghost" href="mailto:your.email@example.com">Email me</a>
+                <div class="col-2 card">
+                    <h3>Quick analogy</h3>
+                    <p>Imagine two people meeting: they say hello, show ID, verify identity with a trusted third party,
+                        agree a secret handshake, and then speak in private. That sequence is the TLS handshake.</p>
                 </div>
+            </section>
 
-                <div class="badges">
-                    <span>TryHackMe</span>
-                    <span>HackTheBox</span>
-                    <span>CTF</span>
-                </div>
-            </div>
+            <section class="card">
+                <h2>Code examples</h2>
+                <p class="meta">Click the <em>Copy</em> button to copy each snippet. These are for demonstration — do
+                    not use the DH demo for production cryptography.</p>
 
-            <div class="hero-right">
-                <div class="card stats">
-                    <div><strong>Degree</strong><br />B.E. Computer Science (4th year)</div>
-                    <div><strong>Focus</strong><br />Networking · Pentesting · Security Analysis</div>
-                    <div><strong>Status</strong><br />Open to internships & collaborations</div>
-                </div>
-            </div>
-        </section>
+                <h3>1) Observe a real TLS connection (Python)</h3>
+                <button class="btn copy" data-target="py-tls">Copy</button>
+                <pre id="py-tls"><code>import socket, ssl
 
-        <section id="projects" class="container section">
-            <h3>Projects</h3>
-            <div class="grid">
-                <article class="project">
-                    <h4>Host-based Intrusion Detection System (HIDS)</h4>
-                    <p class="muted">In progress · Defensive monitoring & dashboard</p>
-                    <p>
-                        A cross-platform HIDS that collects host telemetry (login failures, file-integrity events,
-                        process
-                        anomalies) and visualizes alerts in a web dashboard. Built for learning and defensive research.
-                    </p>
-                    <ul>
-                        <li>File Integrity Monitoring (SHA256 snapshots)</li>
-                        <li>Process monitoring & suspicious process scoring</li>
-                        <li>Alert classification & dashboard visualizations</li>
-                    </ul>
-                </article>
+hostname = 'www.google.com'
+port = 443
 
-                <article class="project">
-                    <h4>Honeypot (Honeyport)</h4>
-                    <p class="muted">Demo</p>
-                    <p>
-                        Lightweight honeypot that simulates services to capture attacker interactions for analysis.
-                        Includes
-                        sandboxed logging and attacker flow visualization.
-                    </p>
-                </article>
+context = ssl.create_default_context()
 
-                <article class="project">
-                    <h4>Defensive Input-Capture Research</h4>
-                    <p class="muted">Research / Ethical</p>
-                    <p>
-                        Research into detecting input-capture behavior (e.g., keyloggers) with the goal of building
-                        detectors
-                        and user-focused mitigations. Lab-only testing; no malicious tooling published.
-                    </p>
-                </article>
-            </div>
-        </section>
+with socket.create_connection((hostname, port)) as sock:
+    with context.wrap_socket(sock, server_hostname=hostname) as secure_sock:
+        print(f"Connected to {hostname} with {secure_sock.version()}")
+        print("Cipher used:", secure_sock.cipher())
+        print("Server certificate:", secure_sock.getpeercert())
+</code></pre>
 
-        <section id="skills" class="container section">
-            <h3>Skills & Tools</h3>
-            <div class="chips">
-                <span>Python</span>
-                <span>Shell / Bash</span>
-                <span>Networking</span>
-                <span>Pentesting</span>
-                <span>Host Forensics</span>
-                <span>React (basic)</span>
-                <span>MySQL / SQLAlchemy</span>
-                <span>MITRE ATT&amp;CK</span>
-            </div>
-        </section>
+                <h3>2) Simple Diffie-Hellman demo (educational)</h3>
+                <button class="btn copy" data-target="py-dh">Copy</button>
+                <pre id="py-dh"><code># Educational DH demo — not secure for production
+import random
 
-        <section id="about" class="container section about">
-            <h3>About Me</h3>
-            <p>
-                I'm currently pursuing my Bachelor of Engineering in Computer Science. I enjoy learning practical
-                security:
-                capturing and analyzing telemetry, building detection tools, running CTFs, and improving defensive
-                tooling.
-            </p>
-            <p class="muted small">
-                Note: All projects and research described here are conducted ethically in lab environments. Any
-                input-capture
-                code referenced is strictly for detection and defensive research and is not published as malicious
-                tooling.
-            </p>
-        </section>
+P = 23  # small prime for demo
+G = 5
 
-        <section id="contact" class="container section contact">
-            <h3>Contact</h3>
-            <p>If you want to collaborate, offer internships, or connect — reach out.</p>
-            <div class="contact-actions">
-                <a class="btn" href="mailto:your.email@example.com">Email: your.email@example.com</a>
-                <div class="links">
-                    <a target="_blank" rel="noopener noreferrer" href="https://github.com/your-username">GitHub</a>
-                    <a target="_blank" rel="noopener noreferrer"
-                        href="https://linkedin.com/in/your-username">LinkedIn</a>
-                    <a target="_blank" rel="noopener noreferrer"
-                        href="https://tryhackme.com/p/your-username">TryHackMe</a>
-                    <a target="_blank" rel="noopener noreferrer"
-                        href="https://www.hackthebox.com/profile/your-username">HackTheBox</a>
-                </div>
-            </div>
-            <p class="muted small">Resume: <a href="/Ajinkya_Bhosale_Resume.pdf">Download PDF</a> (replace with your
-                resume file)</p>
-        </section>
-    </main>
+a = random.randint(1, P-1)
+A = pow(G, a, P)
 
-    <footer class="site-footer">
-        <div class="container">
-            <small>© <span id="year"></span> Ajinkya Bhosale — Built with HTML, CSS &amp; JS</small>
-        </div>
-    </footer>
+b = random.randint(1, P-1)
+B = pow(G, b, P)
+
+client_secret = pow(B, a, P)
+server_secret = pow(A, b, P)
+
+print("Client public key:", A)
+print("Server public key:", B)
+print("Shared secret (client):", client_secret)
+print("Shared secret (server):", server_secret)
+</code></pre>
+
+                <h3>3) Use OpenSSL to inspect handshake</h3>
+                <button class="btn copy" data-target="sh-openssl">Copy</button>
+                <pre id="sh-openssl"><code>openssl s_client -connect www.google.com:443
+</code></pre>
+
+                <p class="meta">Tip: Show these snippets in your blog and explain the output line-by-line for readers
+                    who are new to networking.</p>
+            </section>
+
+            <section class="card">
+                <h2>How to use this HTML</h2>
+                <ol>
+                    <li>Copy the full HTML file into <code>index.html</code>.</li>
+                    <li>Create a <code>style.css</code> file for CSS and a <code>script.js</code> file for JavaScript.
+                    </li>
+                    <li>Open <code>index.html</code> in your browser to preview the page.</li>
+                    <li>Host it on GitHub Pages, Netlify, or Vercel to publish quickly.</li>
+                </ol>
+            </section>
+
+        </article>
+
+        <footer>Made for your tech blog — tell me if you want a light theme, markdown import, or a ready-to-deploy
+            GitHub Pages repo.</footer>
+    </div>
 
     <script src="script.js"></script>
 </body>
